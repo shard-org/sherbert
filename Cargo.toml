@@ -1,0 +1,12 @@
+[package]
+name = "sherbert"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies.comrak]
+version = "0.26.0"
+default-features = false
+features = ["syntect"]
+
+[dependencies.syntect]
+version = "5.2.0"

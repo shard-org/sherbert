@@ -1,0 +1,10 @@
+%YAML 1.2
+---
+name: Shard
+file_extensions: [s, shd, shard]
+scope: source.s
+
+contexts:
+  main:
+    - match: \b(if|else|for|while)\b
+      scope: keyword.control.s
