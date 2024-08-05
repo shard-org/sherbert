@@ -11,9 +11,8 @@
 > }
 > 
 > // Comment here
-> // Comments continue
-> /* ff
->   sdfdf
+> /* Line 1
+>    Line 2
 > */
 >
 > from {1:} heap -> Iterator {

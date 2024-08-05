@@ -19,7 +19,10 @@ contexts:
       push: comment_block
 
     - match: "%|'"
-      scope: variable.other.readwrite
+      scope: punctuation.definition.variable
+
+    - match: "'"
+      scope: punctuation.definition.readwrite
 
     - match: '@\w+'
       scope: entity.name.class
@@ -39,11 +42,17 @@ contexts:
     - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
       scope: entity.name.class
 
+    - match: '\?\?'
+      scope: variable.other
+
     - match: ((!|\$)\w+)
       scope: entity.name.function
 
+    - match: \b[0-9]+\.[0-9]+\b
+      scope: constant.numeric.float
+    
     - match: \b[0-9]+\b
-      scope: constant.numeric
+      scope: constant.numeric.integer
 
     - match: '"'
       push: string
