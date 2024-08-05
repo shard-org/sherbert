@@ -15,6 +15,7 @@
 > /* ff
 >   sdfdf
 > */
+>
 > from {1:} heap -> Iterator {
 >    %array = $malloc @size heap // Comment here
 >    '[array] = heap

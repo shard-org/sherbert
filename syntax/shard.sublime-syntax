@@ -12,8 +12,29 @@ contexts:
     - match: (:\w+)
       scope: meta.preprocessor
 
-    - match: ((//.*$)|(/\*.*\*/))
+    - match: //.*$
       scope: comment.block
+
+    - match: '\/\*'
+      push: comment_block
+
+    - match: "%|'"
+      scope: variable.other.readwrite
+
+    - match: '@\w+'
+      scope: entity.name.class
+
+    - match: '\*|\/|%|-|\+|<|>'
+      scope: keyword.operator.arithmetic
+    
+    - match: '>>|<<|~|&&|\|\||\^\^|:'
+      scope: keyword.operator.bitwise
+
+    - match: '=|\+\+|--'
+      scope: keyword.operator.assignment
+
+    - match: '~=|='
+      scope: keyword.operator.logical
 
     - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
       scope: entity.name.class
@@ -26,6 +47,11 @@ contexts:
 
     - match: '"'
       push: string
+
+  comment_block:
+    - meta_scope: comment.block
+    - match: '\*\/'
+      pop: true
 
   string:
     - meta_scope: string.quoted.double
