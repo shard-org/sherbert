@@ -1,10 +1,34 @@
 %YAML 1.2
 ---
-name: Shard
+name: shard
 file_extensions: [s, shd, shard]
 scope: source.s
 
 contexts:
   main:
-    - match: \b(if|else|for|while)\b
-      scope: keyword.control.s
+    - match: \b(ret)\b
+      scope: keyword.control
+
+    - match: (:\w+)
+      scope: meta.preprocessor
+
+    - match: ((//.*$)|(/\*.*\*/))
+      scope: comment.block
+
+    - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
+      scope: entity.name.class
+
+    - match: ((!|\$)\w+)
+      scope: entity.name.function
+
+    - match: \b[0-9]+\b
+      scope: constant.numeric
+
+    - match: '"'
+      push: string
+
+  string:
+    - meta_scope: string.quoted.double
+    - match: '"'
+      pop: true
+

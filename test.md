@@ -10,8 +10,13 @@
 >    [1:] array
 > }
 > 
+> // Comment here
+> // Comments continue
+> /* ff
+>   sdfdf
+> */
 > from {1:} heap -> Iterator {
->    %array = $malloc @size heap
+>    %array = $malloc @size heap // Comment here
 >    '[array] = heap
 >    ret {@size heap, array}
 > }
