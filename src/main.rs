@@ -18,6 +18,7 @@ use comrak::nodes::{AstNode, NodeCode, NodeCodeBlock, NodeValue};
 use comrak::plugins::syntect::{SyntectAdapter, SyntectAdapterBuilder};
 
 use syntect::parsing::{SyntaxSet, SyntaxSetBuilder};
+use syntect::highlighting::ThemeSet;
 
 use std::sync::LazyLock;
 
@@ -26,8 +27,13 @@ static ADAPTER: LazyLock<SyntectAdapter> = LazyLock::new(|| {
     set.add_plain_text_syntax();
     set.add_from_folder("syntax/", true).unwrap();
 
+    let mut theme_set = ThemeSet::load_defaults();
+
+    theme_set.add_from_folder("themes").unwrap();
+
     SyntectAdapterBuilder::new()
-        .theme("Solarized (dark)")
+        .theme_set(theme_set)
+        .theme("gruvbox")
         .syntax_set(set.build())
         .build()
 });
