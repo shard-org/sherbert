@@ -17,8 +17,8 @@ use comrak::adapters::SyntaxHighlighterAdapter;
 use comrak::nodes::{AstNode, NodeCode, NodeCodeBlock, NodeValue};
 use comrak::plugins::syntect::{SyntectAdapter, SyntectAdapterBuilder};
 
-use syntect::parsing::{SyntaxSet, SyntaxSetBuilder};
 use syntect::highlighting::ThemeSet;
+use syntect::parsing::{SyntaxSet, SyntaxSetBuilder};
 
 use std::sync::LazyLock;
 
