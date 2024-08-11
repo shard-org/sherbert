@@ -27,10 +27,16 @@ contexts:
     - match: '@\w+'
       scope: entity.name.class
 
+    - match: '\bstruct|extern|op|destr|verb|enum|union|cast|type|syscall|enc|reg\b'
+      scope: keyword.other
+
+    - match: 'def|loop|entry'
+      scope: keyword.operator
+
     - match: '\*|\/|%|-|\+|<|>'
       scope: keyword.operator.arithmetic
-    
-    - match: '>>|<<|~|&&|\|\||\^\^|:'
+
+    - match: '\b>>|<<|~|&&|\|\||\^\^|:\b'
       scope: keyword.operator.bitwise
 
     - match: '=|\+\+|--'
@@ -42,8 +48,11 @@ contexts:
     - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
       scope: entity.name.class
 
-    - match: '\?\?'
+    - match: '\?'
       scope: variable.other
+
+    - match: '#\w+'
+      scope: entity.other.attribute-name
 
     - match: ((!|\$)\w+)
       scope: entity.name.function

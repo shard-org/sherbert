@@ -1,41 +1,60 @@
-> ```
-> :ARCH x86_64 linux
-> :LINKER #LINKER -lc
-> 
-> :EXTERN malloc 8 -> []
-> :EXTERN free []
-> 
-> :STRUCT Iterator {
->    4 len
->    [1:] array
-> }
-> 
-> // Comment here
-> /* Line 1
->    Line 2
-> */
->
-> from {1:} heap -> Iterator {
->    %array = $malloc @size heap // Comment here
->    '[array] = heap
->    ret {@size heap, array}
-> }
-> 
-> map Iterator iter, [] func, -> Iterator {
->    loop, init {%i 4}, ('i ++ & i < iter->len):
->       'iter->array.i = !func iter->array.i
->    ret iter
-> }
-> 
-> for_each Iterator iter, [] func {
->    loop, init {%i 4}, ('i ++ & i < iter->len):
->       !func iter->array.i
->    $free iter->array
-> }
-> 
-> entry {
->    Iterator !from {1, 2, 3, 4, 5, 6, 7, 8}
->       => !map |x: x * 2|
->       => !for_each |x: $printf "%d\n", x|
-> }
-> ```
+```
+:NAME vec
+:LIB libc
+
+extern malloc  #WORD -> []
+extern memcpy  [], [], #WORD -> 4
+extern realloc [], #WORD -> []
+extern printf  [1:], @varargs ?
+ 
+struct Vec<T> {
+   [T:]  contents
+   #WORD len
+   #WORD cap
+}
+
+from T:? array -> Vec<T> {
+   %contents [T:] = $malloc @size array
+   $memcpy contents, array, @size array
+   ret {contents, @len array, @len array}
+}
+
+new -> Vec<T>:
+   ret {0, 0, 0}
+
+destr Vec<T> {
+   $free #1->contents
+}
+
+op Vec<T> . ? -> [T] {
+   #1->contents.#2
+}
+
+push Vec<T> vec, T element {
+   (vec->contents = 0) {
+      'vec->contents = $malloc (@size T * 2)
+      'vec->cap = 2
+   }
+
+   (vec->len = vec->cap) {
+      'vec->cap * 2
+      'vec->contents = $realloc vec->contents, (@size T * vec->cap)
+   }
+
+   'vec->contents.(vec->len) = element
+   'vec->len = vec->len + 1
+}
+
+entry {
+   %vec = Vec<4> !new
+
+   vec => !push 1
+   vec => !push 2
+   vec => !push 3
+   vec => !push 4
+   vec => !push 5
+
+   $printf "third num: %d\n", vec.2
+   @destr vec
+}
+```
