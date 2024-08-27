@@ -7,72 +7,87 @@ scope: source.s
 contexts:
   main:
     - match: \b(ret)\b
-      scope: keyword.control
+      scope: keyword.ret
 
     - match: (:\w+)
-      scope: meta.preprocessor
+      scope: tag.inner
+
+    - match: (::\w+)
+      scope: tag.outer
 
     - match: //.*$
-      scope: comment.block
+      scope: comment
 
     - match: '\/\*'
       push: comment_block
 
-    - match: "%|'"
-      scope: punctuation.definition.variable
+    - match: "%"
+      scope: op.declaration
 
     - match: "'"
-      scope: punctuation.definition.readwrite
+      scope: op.mutation
 
     - match: '@\w+'
-      scope: entity.name.class
+      scope: builtin.call
 
-    - match: '\bstruct|extern|op|destr|verb|enum|union|cast|type|syscall|enc|reg\b'
+    - match: '@@\w+'
+      scope: builtin.outer
+
+    - match: '\bstruct|extern|op|destr|verb|union|cast|type|syscall|enc|reg\b'
       scope: keyword.other
 
     - match: 'def|loop|entry'
-      scope: keyword.operator
+      scope: keyword.attribute
+
+    - match: '->'
+      scope: op.type
+
+    - match: '=>'
+      scope: op.other
 
     - match: '\*|\/|%|-|\+|<|>'
-      scope: keyword.operator.arithmetic
+      scope: op.arithmetic
 
     - match: '\b>>|<<|~|&&|\|\||\^\^|:\b'
-      scope: keyword.operator.bitwise
+      scope: op.bitwise
 
-    - match: '=|\+\+|--'
-      scope: keyword.operator.assignment
+    - match: '<-|\+\+|--'
+      scope: op.assignment
 
     - match: '~=|='
-      scope: keyword.operator.logical
+      scope: op.logic
 
     - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
-      scope: entity.name.class
+      scope: entity.type
 
     - match: '\?'
-      scope: variable.other
+      scope: entity.type.lesser
+
+    - match: '\[|\]'
+      scope: op.brackets
 
     - match: '#\w+'
-      scope: entity.other.attribute-name
+      scope: preprocess.macro
 
     - match: ((!|\$)\w+)
-      scope: entity.name.function
+      scope: entity.function
 
     - match: \b[0-9]+\.[0-9]+\b
-      scope: constant.numeric.float
+      scope: literal.float
     
     - match: \b[0-9]+\b
-      scope: constant.numeric.integer
+      scope: literal.integer
 
     - match: '"'
       push: string
 
   comment_block:
-    - meta_scope: comment.block
+    - meta_scope: comment
     - match: '\*\/'
       pop: true
 
   string:
-    - meta_scope: string.quoted.double
+    - meta_scope: literal.string
     - match: '"'
       pop: true
 

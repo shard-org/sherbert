@@ -1,60 +1,44 @@
+# Iterators
+A fairly lengthy example on how an iterator implementation could be done.
+
 ```
-:NAME vec
-:LIB libc
+:arch x86_64 linux
+:linker #LINKER -lc
 
-extern malloc  #WORD -> []
-extern memcpy  [], [], #WORD -> 4
-extern realloc [], #WORD -> []
-extern printf  [1:], @varargs ?
- 
-struct Vec<T> {
-   [T:]  contents
-   #WORD len
-   #WORD cap
+extern malloc 8 -> []
+extern free []
+
+struct Iterator {
+   4    len,
+   [1:] array,
 }
 
-from T:? array -> Vec<T> {
-   %contents [T:] = $malloc @size array
-   $memcpy contents, array, @size array
-   ret {contents, @len array, @len array}
+destr Iterator iter {
+   $free #iter.array
 }
 
-new -> Vec<T>:
-   ret {0, 0, 0}
-
-destr Vec<T> {
-   $free #1->contents
+from {1:} heap -> Iterator {
+   %array = $malloc @size heap
+   'array = heap
+   ret {@size heap, array}
 }
 
-op Vec<T> . ? -> [T] {
-   #1->contents.#2
+map Iterator iter, [] func, -> Iterator {
+   loop (%i 4 ; 'i ++ ; i < iter.len):
+      'iter.array.i = !func iter.array.i
+   ret iter
 }
 
-push Vec<T> vec, T element {
-   (vec->contents = 0) {
-      'vec->contents = $malloc (@size T * 2)
-      'vec->cap = 2
-   }
-
-   (vec->len = vec->cap) {
-      'vec->cap * 2
-      'vec->contents = $realloc vec->contents, (@size T * vec->cap)
-   }
-
-   'vec->contents.(vec->len) = element
-   'vec->len = vec->len + 1
+for_each Iterator iter, [] func {
+   loop (%i 4 ; 'i ++ ; i < iter.len):
+      !func iter.array.i
+   @destr iter
 }
 
-entry {
-   %vec = Vec<4> !new
 
-   vec => !push 1
-   vec => !push 2
-   vec => !push 3
-   vec => !push 4
-   vec => !push 5
-
-   $printf "third num: %d\n", vec.2
-   @destr vec
-}
+entry:
+   Iterator !from {1, 2, 3, 4, 5, 6, 7, 8}
+      => !map |x: x * 2|
+      => !for_each |x: $printf("%d\n", x)|
+   ret
 ```
