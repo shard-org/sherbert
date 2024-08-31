@@ -25,9 +25,9 @@ average [T:] nums, #WORD len, -> T {
 ## Features
 <div class=block>
 
-\- Insane compiletime functionality.. the code emitted is defined at comptime after all.. Think of **Shard** as a really fancy text preprocessor.  
+\- Insane compiletime functionality; The code emitted is defined at comptime after all.. Think of **Shard** as a really fancy text preprocessor.  
 \- Basically every part of the language is customizable.  
-\- No <i>"Safety Features"</i> preventing you from doing stupid stuff.  
+\- No <i>"Safety Features"</i> preventing you from doing stupid stuff. :L
 \- Architecture details are defined within the standard library, meaning adding support for additional ones doesn't
   require modifying any compiler source code, and can by done by the user. As long as there's a compatible assembler, of course.  
 \- Shark mascot! (best of all the features)  
