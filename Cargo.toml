@@ -1,12 +1,23 @@
 [package]
-name = "sherbert"
+name = "sherbert2"
 version = "0.1.0"
 edition = "2021"
+authors = ["slbsh"]
+license = "0BSD"
 
-[dependencies.comrak]
-version = "0.26.0"
-default-features = false
-features = ["syntect"]
+[dependencies]
+foxhole = { git = "https://github.com/Kay-Conte/foxhole-rs" }
 
-[dependencies.syntect]
-version = "5.2.0"
+[build-dependencies]
+comrak = { version = "0.27", default-features = false, features = ["syntect"] }
+regex = "1.10"
+syntect = "5.2"
+walkdir = "2.5"
+
+[profile.release]
+lto = true
+panic = "abort"
+opt-level = "z"
+strip = "all"
+debug = false
+codegen-units = 1

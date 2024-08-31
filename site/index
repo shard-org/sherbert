@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<meta charset="utf8">
+<link href="theme.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+<header class=center style="margin-top: 15px;">
+   <nav>
+      <a href="/doc/guide/getting-started">Get Started</a>
+      <a href="/doc">Documentation</a>
+      <a href="/projects">Projects</a>
+      <a href="/blog">Blog</a>
+      <a href="/community">Community</a>
+   </nav>
+</header>
+
+
+<p><b>Shard</b> - "The OSR of programming languages"</p>
+<div class=text>
+
+
+<h2>Premise</h2>
+<p>Flexible, terse, and non-opinionated assembly-inspired programming language 
+geared toward compile target flexibility and direct control.<br>
+No assumptions, everything must be explicitly declared, including the code emitted.</p>
+<code><pre>
+<span style="color:#4c566a;">// not your average language :v
+</span><span style="color:#d8dee9;">average </span><span style="color:#8fbcbb;">[</span><span style="color:#d8dee9;">T:</span><span style="color:#8fbcbb;">]</span><span style="color:#d8dee9;"> nums, </span><span style="font-weight:bold;color:#5e81ac;">#WORD</span><span style="color:#d8dee9;"> len, </span><span style="font-weight:bold;color:#8fbcbb;">-&gt;</span><span style="color:#d8dee9;"> T </span><span style="color:#eceff4;">{
+</span><span style="color:#d8dee9;">   </span><span style="color:#88c0d0;">%</span><span style="color:#d8dee9;">sum T 
+</span><span style="color:#d8dee9;">   </span><span style="color:#88c0d0;">%</span><span style="color:#d8dee9;">i </span><span style="font-weight:bold;color:#5e81ac;">#WORD
+</span><span style="color:#d8dee9;">   </span><span style="font-style:italic;color:#81a1c1;">loop </span><span style="color:#eceff4;">(</span><span style="color:#88c0d0;">&#39;</span><span style="color:#d8dee9;">i </span><span style="color:#81a1c1;">++ </span><span style="color:#d8dee9;">; i </span><span style="color:#81a1c1;">&lt;</span><span style="color:#d8dee9;"> len</span><span style="color:#eceff4;">)</span><span style="color:#d8dee9;">:
+</span><span style="color:#d8dee9;">      </span><span style="color:#88c0d0;">&#39;</span><span style="color:#d8dee9;">sum </span><span style="color:#81a1c1;">+</span><span style="color:#d8dee9;"> nums.i
+</span><span style="color:#d8dee9;">   </span><span style="font-weight:bold;color:#81a1c1;">ret</span><span style="color:#d8dee9;"> sum </span><span style="color:#81a1c1;">/</span><span style="color:#d8dee9;"> len
+</span><span style="color:#eceff4;">}
+</span></pre></code>
+
+<h2>Features</h2>
+<div class=block>
+
+<p>- Insane compiletime functionality.. the code emitted is defined at comptime after all.. Think of <b>Shard</b> as a really fancy text preprocessor.<br>
+- Basically every part of the language is customizable.<br>
+- No <i>"Safety Features"</i> preventing you from doing stupid stuff.<br>
+- Architecture details are defined within the standard library, meaning adding support for additional ones doesn't 
+require modifying any compiler source code, and can by done by the user. As long as there's a compatible assembler, of course.<br>
+- Shark mascot! (best of all the features)</p>
+</div>
+
+</div>
+
+<code><pre>
+<span style="color:#4c566a;">/* Linear allocatior (first fit). */
+</span><span style="color:#d8dee9;">
+</span><span style="color:#4c566a;">// 1 means occupied, 0 means block is free. 
+</span><span style="color:#4c566a;">// BLOCK_TABLE is a bit representation of all addressable blocks
+</span><span style="color:#d8dee9;">BLOCK_TABLE: </span><span style="font-weight:bold;color:#5e81ac;">#WORD
+</span><span style="font-weight:bold;color:#5e81ac;">:macro</span><span style="color:#d8dee9;"> BLOCK_SIZE </span><span style="color:#b48ead;">1024
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">malloc </span><span style="font-weight:bold;color:#5e81ac;">#WORD</span><span style="color:#d8dee9;"> size </span><span style="font-weight:bold;color:#8fbcbb;">-&gt; </span><span style="color:#eceff4;">{</span><span style="color:#8fbcbb;">[]</span><span style="color:#d8dee9;">, </span><span style="font-weight:bold;color:#5e81ac;">#WORD</span><span style="color:#eceff4;">} {
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">%</span><span style="color:#d8dee9;">n_blocks </span><span style="color:#81a1c1;">=</span><span style="color:#d8dee9;"> size </span><span style="color:#81a1c1;">/</span><span style="color:#d8dee9;"> BLOCK_SIZE 
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">%</span><span style="color:#d8dee9;">start_zeros </span><span style="color:#81a1c1;">= </span><span style="color:#b48ead;">0
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">%</span><span style="color:#d8dee9;">n_zeros </span><span style="color:#81a1c1;">= </span><span style="color:#b48ead;">0
+</span><span style="color:#d8dee9;">    l1 </span><span style="font-style:italic;color:#81a1c1;">loop </span><span style="color:#eceff4;">(</span><span style="color:#88c0d0;">&#39;</span><span style="color:#d8dee9;">start_zeros</span><span style="color:#81a1c1;">++</span><span style="color:#d8dee9;">; start_zeros </span><span style="color:#81a1c1;">&lt; </span><span style="color:#eceff4;">(</span><span style="font-weight:bold;font-style:italic;color:#d08770;">@size</span><span style="color:#d8dee9;"> BLOCK_TABLE </span><span style="color:#81a1c1;">* </span><span style="color:#b48ead;">8</span><span style="color:#eceff4;">)) {
+</span><span style="color:#d8dee9;">        </span><span style="color:#eceff4;">((</span><span style="color:#d8dee9;">BLOCK_TABLE </span><span style="color:#81a1c1;">&gt;&gt;</span><span style="color:#d8dee9;"> start_zeros </span><span style="color:#81a1c1;">&amp;&amp; </span><span style="color:#b48ead;">1</span><span style="color:#eceff4;">) </span><span style="color:#81a1c1;">== </span><span style="color:#b48ead;">1</span><span style="color:#eceff4;">)
+</span><span style="color:#d8dee9;">            jmp l1;
+</span><span style="color:#d8dee9;">        </span><span style="color:#4c566a;">// found zero, free chunk ahead
+</span><span style="color:#d8dee9;">        </span><span style="font-style:italic;color:#81a1c1;">loop </span><span style="color:#eceff4;">(</span><span style="color:#88c0d0;">&#39;</span><span style="color:#d8dee9;">n_zeros</span><span style="color:#81a1c1;">++</span><span style="color:#d8dee9;">; </span><span style="color:#eceff4;">(</span><span style="color:#d8dee9;">BLOCK_TABLE </span><span style="color:#81a1c1;">&gt;&gt;</span><span style="color:#d8dee9;"> start_zeros </span><span style="color:#81a1c1;">&amp;&amp; </span><span style="color:#b48ead;">1</span><span style="color:#eceff4;">) </span><span style="color:#81a1c1;">~= </span><span style="color:#b48ead;">1</span><span style="color:#eceff4;">)
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">        </span><span style="color:#eceff4;">(</span><span style="color:#d8dee9;">n_zeros </span><span style="color:#81a1c1;">&gt;=</span><span style="color:#d8dee9;"> n_blocks</span><span style="color:#eceff4;">)</span><span style="color:#d8dee9;">: 
+</span><span style="color:#d8dee9;">            </span><span style="color:#4c566a;">//success! we found a large enough contiguous span equal or larger
+</span><span style="color:#d8dee9;">            </span><span style="color:#4c566a;">// than what the caller requested.
+</span><span style="color:#d8dee9;">            </span><span style="font-weight:bold;color:#81a1c1;">ret </span><span style="color:#eceff4;">{</span><span style="color:#d8dee9;"> start_zeros </span><span style="color:#81a1c1;">*</span><span style="color:#d8dee9;"> BLOCK_SIZE, n_zeros </span><span style="color:#eceff4;">}
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">        </span><span style="color:#4c566a;">// not found. we will move to the next free blocks
+</span><span style="color:#d8dee9;">    </span><span style="color:#eceff4;">}
+</span><span style="color:#d8dee9;">    </span><span style="color:#4c566a;">// our bit cursor moved past the maximum size of blocks.
+</span><span style="color:#d8dee9;">    </span><span style="font-weight:bold;color:#81a1c1;">ret </span><span style="color:#eceff4;">{ </span><span style="color:#b48ead;">0</span><span style="color:#d8dee9;">, </span><span style="color:#b48ead;">0 </span><span style="color:#eceff4;">}
+</span><span style="color:#eceff4;">}
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">free T </span><span style="font-weight:bold;color:#8fbcbb;">-&gt; </span><span style="color:#eceff4;">{</span><span style="color:#8fbcbb;">[]</span><span style="color:#d8dee9;">, </span><span style="font-weight:bold;color:#5e81ac;">#WORD</span><span style="color:#eceff4;">}</span><span style="color:#d8dee9;"> fat_ptr </span><span style="color:#eceff4;">{
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">%</span><span style="color:#d8dee9;">cleared </span><span style="color:#81a1c1;">= </span><span style="color:#b48ead;">0</span><span style="color:#d8dee9;">; </span><span style="color:#4c566a;">// copy
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">    </span><span style="font-style:italic;color:#81a1c1;">loop </span><span style="color:#eceff4;">(</span><span style="color:#88c0d0;">&#39;</span><span style="color:#d8dee9;">cleared</span><span style="color:#81a1c1;">++</span><span style="color:#d8dee9;">; cleared </span><span style="color:#81a1c1;">&lt;</span><span style="color:#d8dee9;"> fat_ptr.</span><span style="color:#b48ead;">1</span><span style="color:#eceff4;">)</span><span style="color:#d8dee9;">:
+</span><span style="color:#d8dee9;">        </span><span style="color:#88c0d0;">&#39;</span><span style="color:#d8dee9;">BLOCK_TABLE </span><span style="color:#81a1c1;">^^</span><span style="color:#d8dee9;"> BLOCK_TABLE </span><span style="color:#81a1c1;">&amp;&amp; </span><span style="color:#eceff4;">(</span><span style="color:#b48ead;">1 </span><span style="color:#81a1c1;">&lt;&lt;</span><span style="color:#d8dee9;"> cleared</span><span style="color:#eceff4;">)
+</span><span style="color:#eceff4;">}
+</span><span style="color:#d8dee9;">
+</span><span style="font-style:italic;color:#81a1c1;">entry </span><span style="color:#eceff4;">{
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">%</span><span style="color:#d8dee9;">string </span><span style="color:#8fbcbb;">[</span><span style="color:#b48ead;">1</span><span style="color:#d8dee9;">:</span><span style="color:#8fbcbb;">] </span><span style="color:#81a1c1;">= </span><span style="color:#88c0d0;">!malloc </span><span style="color:#b48ead;">14
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">    </span><span style="color:#4c566a;">// Null pointer check
+</span><span style="color:#d8dee9;">    </span><span style="color:#eceff4;">(</span><span style="color:#81a1c1;">~</span><span style="color:#d8dee9;">string</span><span style="color:#eceff4;">)</span><span style="color:#d8dee9;">:
+</span><span style="color:#d8dee9;">        </span><span style="color:#88c0d0;">$printf </span><span style="color:#eceff4;">(</span><span style="color:#a3be8c;">&quot;Unable to allocate %d bytes!&quot;</span><span style="color:#d8dee9;">, </span><span style="color:#b48ead;">14</span><span style="color:#eceff4;">)
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">&#39;</span><span style="color:#8fbcbb;">[</span><span style="color:#d8dee9;">string</span><span style="color:#8fbcbb;">] </span><span style="color:#81a1c1;">= </span><span style="color:#a3be8c;">&quot;Hello, World!\0&quot;
+</span><span style="color:#d8dee9;">
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">$printf </span><span style="color:#eceff4;">(</span><span style="color:#a3be8c;">&quot;%s&quot;</span><span style="color:#d8dee9;">, string</span><span style="color:#eceff4;">)
+</span><span style="color:#d8dee9;">    </span><span style="color:#88c0d0;">!free</span><span style="color:#d8dee9;"> string
+</span><span style="color:#eceff4;">}
+</span></pre></code>
+<div>
+<div class=center style="height:15px; padding-top:10px">
+   <p style="font-size:0.85em">CC0 Public Domain 2024 Shard Team</p>
+</div>
+
+

@@ -33,7 +33,7 @@ contexts:
     - match: '@@\w+'
       scope: builtin.outer
 
-    - match: '\bstruct|extern|op|destr|verb|union|cast|type|syscall|enc|reg\b'
+    - match: '\bstruct|extern|op|destr|verb|union|cast|type|syscall|enc|reg|export\b'
       scope: keyword.other
 
     - match: 'def|loop|entry'
@@ -44,6 +44,9 @@ contexts:
 
     - match: '=>'
       scope: op.other
+
+    - match: '\{|\}|\(|\)|\|'
+      scope: syntax.separator
 
     - match: '\*|\/|%|-|\+|<|>'
       scope: op.arithmetic
@@ -56,6 +59,12 @@ contexts:
 
     - match: '~=|='
       scope: op.logic
+
+    - match: '&'
+      scope: op.ref
+
+    - match: ';'
+      scope: op.separator
 
     - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
       scope: entity.type
