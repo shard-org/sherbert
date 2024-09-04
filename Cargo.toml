@@ -18,6 +18,5 @@ walkdir = "2.5"
 lto = true
 panic = "abort"
 opt-level = "z"
-strip = "all"
 debug = false
 codegen-units = 1
