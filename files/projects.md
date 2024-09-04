@@ -7,7 +7,7 @@ Got a project of your own? Reach out at our [Discord](https://discord.gg/f5FVgr7
 ## Official
 <div class=block>
 
-[shard](https://github.com/shard-org/shard) - **Shar**d **C**ompiler.  
+[sharc](https://github.com/shard-org/shard) - **Shar**d **C**ompiler.  
 
 [sherbert](https://github.com/shard-org/sherbert) - This website! (markdown generator, syntax highlighting, and the backend)
 
