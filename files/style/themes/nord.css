@@ -1,0 +1,16 @@
+:root {
+   --colour0:  #1f2029; /* darker background */
+   --colour1:  #2b313b; /* background */
+   --colour2:  #4C566A; /* comments */
+   --colour3:  #D8DEE9; /* foreground */
+   --colour4:  #ECEFF4; /* separators */
+   --colour5:  #8FBCBB; /* types */
+   --colour6:  #88C0D0; /* functions, mutation, declaration */
+   --colour7:  #81A1C1; /* keywords */
+   --colour8:  #81A1C1; /* operators */
+   --colour9:  #5E81AC; /* tags */
+   --colour10: #5E81AC; /* macros */
+   --colour11: #D08770; /* builtins */
+   --colour12: #A3BE8C; /* strings */
+   --colour13: #B48EAD; /* numbers */
+}

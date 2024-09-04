@@ -1,12 +1,17 @@
-<link href="style.css" rel="stylesheet"/>
+<link href="style/style.css" rel="stylesheet"/>
 <include "header.html">
 
-**Shard** - "The OSR of programming languages"
+<div style="position:relative;display:inline-block;">
+<img src="shark.png" style="position:absolute;"/>
+<div style="padding-left:9px;">
 
-<div class=text>
+**Shard** - "The OSR of programming languages" *~~is this even a good quote?~~*
+
+</div>
+</div>
 
 ## Premise
-Flexible, terse, and non-opinionated assembly-inspired programming language 
+Flexible, terse, no compromise, and non-opinionated assembly-inspired programming language 
 geared toward compile target flexibility and direct control.  
 No assumptions, everything must be explicitly declared, including the code emitted.
 
@@ -21,70 +26,54 @@ average [T:] nums, #WORD len, -> T {
 }
 ```
 
-
 ## Features
 <div class=block>
 
 \- Insane compiletime functionality; The code emitted is defined at comptime after all.. Think of **Shard** as a really fancy text preprocessor.  
+
 \- Basically every part of the language is customizable.  
-\- No <i>"Safety Features"</i> preventing you from doing stupid stuff. :L
+
+\- No <i>"Safety Features"</i> preventing you from doing stupid stuff. :L  
+
 \- Architecture details are defined within the standard library, meaning adding support for additional ones doesn't
-  require modifying any compiler source code, and can by done by the user. As long as there's a compatible assembler, of course.  
-\- Shark mascot! (best of all the features)  
-</div>
+   require modifying any compiler source code, and can by done by the user. As long as there's a compatible assembler, of course.  
+
+\- Self contained projects; everything is defined in a single file. (doesn't mean you can't include additional)  
+
+\- Shark mascot! (best of all the features) ~~if you wanna draw a full version lmk~~
 
 </div>
 
-```
-/* Linear allocatior (first fit). */
 
-// 1 means occupied, 0 means block is free. 
-// BLOCK_TABLE is a bit representation of all addressable blocks
-BLOCK_TABLE: #WORD
-:macro BLOCK_SIZE 1024
+## Non-Features
+<div class=block>
 
-malloc #WORD size -> {[], #WORD} {
-    %n_blocks = size / BLOCK_SIZE 
+\- Shard is not meant to be cross-platform or an IR. (although you could certainly try :>)  
+   All architectures are inherently dissimilar, and reconsiling them cannot be done without compromises.  
 
-    %start_zeros = 0
-    %n_zeros = 0
-    l1 loop ('start_zeros++; start_zeros < (@size BLOCK_TABLE * 8)) {
-        ((BLOCK_TABLE >> start_zeros && 1) == 1)
-            jmp l1;
-        // found zero, free chunk ahead
-        loop ('n_zeros++; (BLOCK_TABLE >> start_zeros && 1) ~= 1)
+\- Optimizations are fully left to the user (or in part to whoever writes the standard library). 
+   If you need crazy fast code use 
+   [C](https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html),
+   [Rust](https://www.rust-lang.org/), or
+   [Zig](https://ziglang.org/)
+   instead (or just git gewd)  
 
-        (n_zeros >= n_blocks): 
-            //success! we found a large enough contiguous span equal or larger
-            // than what the caller requested.
-            ret { start_zeros * BLOCK_SIZE, n_zeros }
+\- Standard libraries are for defining the architecture only. They don't provide any additional functionality.
+   Use [libc](https://musl.libc.org/) if you want an expansive standard library.
 
-        // not found. we will move to the next free blocks
-    }
-    // our bit cursor moved past the maximum size of blocks.
-    ret { 0, 0 }
-}
+</div>
 
-free T -> {[], #WORD} fat_ptr {
-    %cleared = 0; // copy
 
-    loop ('cleared++; cleared < fat_ptr.1):
-        'BLOCK_TABLE ^^ BLOCK_TABLE && (1 << cleared)
-}
+## FAQ
+<div class=block>
 
-entry {
-    %string [1:] = !malloc 14
+\- Yes, there is a difference between *"compile target flexibility"* and *"cross-platform"*.  
+   The first is about being able to write **Shard** for any architecture, 
+   the latter is about compiling the same code to multiple architectures.
 
-    // Null pointer check
-    (~string):
-        $printf ("Unable to allocate %d bytes!", 14)
+\- When are you gonna release? ... :( Yeah we're kinda starved for people to work on it..  
+   Please help out if you can! (join the [Discord](https://discord.gg/f5FVgr7gxX) for more info)
 
-    '[string] = "Hello, World!\0"
 
-    $printf ("%s", string)
-    !free string
-}
-```
-
-<div>
+</div>
 <include "footer.html">
