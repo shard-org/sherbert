@@ -87,6 +87,9 @@ contexts:
     - match: \b[0-9]+\b
       scope: literal.integer
 
+    - match: '`'
+      push: char
+
     - match: '"'
       push: string
 
@@ -98,5 +101,10 @@ contexts:
   string:
     - meta_scope: literal.string
     - match: '"'
+      pop: true
+
+  char:
+    - meta_scope: literal.char
+    - match: '`'
       pop: true
 

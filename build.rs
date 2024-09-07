@@ -1,6 +1,6 @@
 use comrak::{parse_document, Arena, Options};
 use comrak::adapters::SyntaxHighlighterAdapter;
-use comrak::nodes::{AstNode, NodeCode, NodeCodeBlock, NodeValue, NodeHtmlBlock, NodeHeading, NodeLink};
+use comrak::nodes::{AstNode, NodeCode, NodeCodeBlock, NodeValue, NodeHtmlBlock, NodeHeading, NodeLink, NodeList};
 use comrak::plugins::syntect::{SyntectAdapter, SyntectAdapterBuilder};
 
 use syntect::highlighting::{ThemeSet, Theme, ThemeSettings, ThemeItem, ScopeSelector, ScopeSelectors, StyleModifier, Color, FontStyle};
@@ -45,7 +45,7 @@ fn main() {
             &options
         );
 
-        format!("<!DOCTYPE html>\n<html lang=en>\n<meta charset=\"UTF-8\">\n<link href=\"theme.css\" rel=\"stylesheet\"/>\n{}\n</html>", parse_block(root))
+        format!("<!DOCTYPE html>\n<html lang=en>\n<meta charset=\"UTF-8\">\n<link href=\"/theme.css\" rel=\"stylesheet\"/>\n{}\n</html>", parse_block(root))
     };
 
     let mkfile = |path: &Path| {
@@ -67,10 +67,10 @@ fn main() {
         let dest = OUTDIR.join(Path::new(path.strip_prefix("files/").unwrap()));
 
         match path.extension().and_then(|s| s.to_str()) {
-            Some("md")   => mkfile(&dest.with_extension("html")).write_all(includes(&into_html(path)).as_bytes()).unwrap(),
-            Some("html") => mkfile(&dest).write_all(includes(&fs::read_to_string(path).unwrap()).as_bytes()).unwrap(),
-            _            => mkfile(&dest).write_all(&fs::read(path).unwrap()).unwrap(),
-        }
+            Some("md")   => mkfile(&dest.with_extension("html")).write_all(includes(&into_html(path)).as_bytes()),
+            Some("html") => mkfile(&dest).write_all(includes(&fs::read_to_string(path).unwrap()).as_bytes()),
+            _            => mkfile(&dest).write_all(&fs::read(path).unwrap()),
+        }.unwrap();
     }
 }
 
@@ -79,20 +79,31 @@ fn parse_block<'a>(node: &'a AstNode<'a>) -> String {
         node.children().map(parse_block).collect();
 
     match node.data.borrow().value {
-        NodeValue::Heading(NodeHeading { level, ..}) => format!("\n<h{level}>{}</h{level}>\n", to_string(node)),
+        NodeValue::Heading(NodeHeading { level, ..}) => {
+            let str: String = to_string(node);
+            format!("\n<h{level} id=\"{}\">{}</h{level}>\n", 
+                str.to_lowercase().split_whitespace().collect::<String>(), str)
+        },
         NodeValue::Text(ref text) => String::from(text),
         NodeValue::LineBreak      => String::from("<br>\n"),
         NodeValue::SoftBreak      => String::from(" \n"),
         NodeValue::Paragraph      => format!("<p>{}</p>\n", to_string(node)),
-        NodeValue::BlockQuote     => format!("\n<div class=\"block quote\">{}</div>\n", to_string(node)),
+        NodeValue::BlockQuote     => format!("\n<div class=quote>{}</div>\n", to_string(node)),
         NodeValue::Strong         => format!("<b>{}</b>", to_string(node)),
         NodeValue::Emph           => format!("<i>{}</i>", to_string(node)),
         NodeValue::Strikethrough  => format!("<s>{}</s>", to_string(node)),
         NodeValue::HtmlInline(ref html) => String::from(html),
         NodeValue::HtmlBlock(NodeHtmlBlock { ref literal, .. }) => String::from(literal),
-        NodeValue::Code(NodeCode { ref literal, .. }) => format!("<c>{literal}</c>"),
+        NodeValue::Code(NodeCode { ref literal, .. }) => format!("`{literal}`"),
         NodeValue::Link(NodeLink { ref url, .. }) => format!("<a href=\"{url}\">{}</a>", to_string(node)), 
         NodeValue::Image(NodeLink { ref url, .. }) => format!("<img src=\"{url}\" alt=\"{}\">", to_string(node)),
+        NodeValue::List(NodeList { ref bullet_char, .. }) => format!("<div class=block>\n{}</div>\n", 
+            node.children()
+                .map(|n| format!("<p>{}{}</p>\n", if *bullet_char as char == '-' { "- " } else { "" },
+                    if let Some(n) = n.children().next()
+                        .filter(|n| n.data.borrow().value == NodeValue::Paragraph)
+                    { to_string(n) } else { parse_block(n) }))
+                .collect::<String>()),
         NodeValue::CodeBlock(NodeCodeBlock { ref literal, .. }) => {
             let mut out = Vec::new();
 
@@ -142,6 +153,7 @@ static ADAPTER: LazyLock<SyntectAdapter> = LazyLock::new(|| {
             item("comment",            2,  None),
 
             item("literal.string",     12, None),
+            item("literal.char",       12, None),
             item("literal.float",      13, None),
             item("literal.integer",    13, None),
 
