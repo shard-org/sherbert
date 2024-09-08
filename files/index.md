@@ -32,7 +32,7 @@ average [T:] nums, #WORD len, -> T {
 - No <i>"Safety Features"</i> preventing you from doing stupid stuff. :L  
 - Architecture details are defined within the standard library, meaning adding support for additional ones doesn't
   require modifying any compiler source code, and can by done by the user. As long as there's a compatible assembler, of course.  
-- Self contained projects; everything is defined in a single file. (doesn't mean you can't include additional)  
+- Self contained projects; everything can be defined in a single file.
 - Shark mascot! (best of all the features) ~~if you wanna draw a full version lmk~~
 
 
