@@ -55,7 +55,7 @@ entry {
       $printf("%d\n", array.i)
 }
 
-bubble_sort 2:?, 4 len:
+bubble_sort 2:? array, 4 len:
    loop (%i 4 ; 'i ++ ; i < len):
       loop (%j 4 ; 'j ++ ; j < len-i-1):
          (array.j > array.j + 1) {

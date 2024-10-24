@@ -35,7 +35,6 @@ average [T:] nums, #WORD len, -> T {
 - Self contained projects; everything can be defined in a single file.
 - Shark mascot! (best of all the features) ~~if you wanna draw a full version lmk~~
 
-
 ## Non-Features
 - Shard is not meant to be cross-platform or an IR. (although you could certainly try :>)  
   All architectures are inherently dissimilar, and reconsiling them cannot be done without compromises.  
@@ -47,7 +46,6 @@ average [T:] nums, #WORD len, -> T {
   instead (or just git gewd)  
 - Standard libraries are for defining the architecture only. They don't provide any additional functionality.
   Use [libc](https://musl.libc.org/) if you want an expansive standard library.
-
 
 ## FAQ
 - Yes, there is a difference between *"compile target flexibility"* and *"cross-platform"*.  
