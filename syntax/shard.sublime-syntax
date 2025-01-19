@@ -33,17 +33,14 @@ contexts:
     - match: '@@\w+'
       scope: builtin.outer
 
-    - match: '\bstruct|extern|op|destr|verb|union|cast|type|syscall|enc|reg|export\b'
+    - match: '\bmod|if|use|fn|pub|let|enum|trait|export|copy|impl|move|struct|extern|type\b'
       scope: keyword.other
 
-    - match: 'def|loop|entry'
+    - match: 'mut|opt|void|never'
       scope: keyword.attribute
 
-    - match: '->'
-      scope: op.type
-
-    - match: '=>'
-      scope: op.other
+    - match: '->|->>'
+      scope: op.thread
 
     - match: '\{|\}|\(|\)|\|'
       scope: syntax.separator
@@ -51,7 +48,7 @@ contexts:
     - match: '\*|\/|%|-|\+|<|>'
       scope: op.arithmetic
 
-    - match: '\b>>|<<|~|&&|\|\||\^\^|:\b'
+    - match: '\b>>|<<|~|&|\||\^\b'
       scope: op.bitwise
 
     - match: '<-|\+\+|--'
@@ -60,13 +57,16 @@ contexts:
     - match: '~=|='
       scope: op.logic
 
-    - match: '&'
+    - match: '&|\*'
       scope: op.ref
 
-    - match: ';'
+    - match: ';|:'
       scope: op.separator
 
     - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
+      scope: entity.type.named
+
+    - match: 'usize|isize|u8|u16|u32|u64|b8|b16|b32|b64|i8|i16|i32|i64'
       scope: entity.type
 
     - match: '\?'
@@ -78,16 +78,16 @@ contexts:
     - match: '#\w+'
       scope: preprocess.macro
 
-    - match: ((!|\$)\w+)
+    - match: '(\$)\w+|(\$)(?=<)|(?<=>)\w+'
       scope: entity.function
 
     - match: \b[0-9]+\.[0-9]+\b
       scope: literal.float
-    
+
     - match: \b[0-9]+\b
       scope: literal.integer
 
-    - match: '`'
+    - match: "'"
       push: char
 
     - match: '"'
