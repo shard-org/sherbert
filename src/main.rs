@@ -7,7 +7,7 @@ use foxhole::resolve::{Url, Query, HeaderMap, ArgMap};
 
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 struct Files(HashMap<PathBuf, Arc<Vec<u8>>>);
 impl foxhole::TypeCacheKey for Files {
