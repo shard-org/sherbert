@@ -11,18 +11,21 @@
 </div>
 
 ## Premise
-Simple-ish, pragmatic, terse, and non-opinionated programming language.  
-Born out of the need for a simpler *Rust* that doesn't standd in your way,  
+Simple-ish, pragmatic, and non-opinionated functional flavoured imperative language.  
+Born out of the need for a simpler *Rust* that doesn't stand in your way,  
 and a more powerful *C* without the multiple layers of technical debt.  
 
 ```
-// pretty average language
-fn average(a: *[u32]) u32 {
+use core::len;
+
+// pretty average language :p
+let average = |a: &[u32]| u32 {
 	let sum = loop let (sum, i) = (0, 0) {
-		if i == a.len(): break sum;
+		if i == a->len(): break sum;
 		(sum + a[i], i + 1)
-	}
-}
+	};
+	sum / a->len()
+};
 ```
 
 ## Features
@@ -37,7 +40,7 @@ fn average(a: *[u32]) u32 {
 
 ## Non-Features
 - Shard will not have a de-facto standard library.
-  Use [libc](https://musl.libc.org/) or something else instead.
+  Use [libc](https://musl.libc.org/) or something else instead.  
   This doesnt mean we won't publish official libraries, just that they wont be a core part of the language as many stds are nowdays
 - We arent planning on making a package manager or build system for shard.  
   Although this might change in the future if the need arises.

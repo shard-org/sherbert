@@ -73,7 +73,7 @@ fn main() {
 		}.unwrap();
 	}
 
-	println!("cargo:rerun-if-changed=files/");
+	// println!("cargo:rerun-if-changed=files/");
 }
 
 fn parse_block<'a>(node: &'a AstNode<'a>) -> String {
@@ -159,33 +159,24 @@ static ADAPTER: LazyLock<SyntectAdapter> = LazyLock::new(|| {
 			item("literal.float",      13, None),
 			item("literal.integer",    13, None),
 
-			item("keyword.ret",        7,  Some(FontStyle::BOLD)),
+			item("keyword.control",    7,  Some(FontStyle::BOLD)),
 			item("keyword.other",      7,  Some(FontStyle::BOLD)),
-			item("keyword.attribute",  7,  Some(FontStyle::ITALIC)),
+			item("keyword.attribute",  5,  Some(FontStyle::ITALIC)),
+			item("keyword.move",       7,  Some(FontStyle::ITALIC)),
 
-			item("tag.inner",          9,  Some(FontStyle::BOLD)),
-			item("tag.outer",          9,  Some(FontStyle::BOLD)),
-
-			item("preprocess.macro",   10, Some(FontStyle::BOLD)),
-
-			item("entity.type",        5,  Some(FontStyle::BOLD)),
+			item("entity.type",        5,  None),
+         item("entity.type.named",  5,  None),
+			item("entity.type.generic",5,  Some(FontStyle::BOLD)),
 			item("entity.type.lesser", 5,  Some(FontStyle::ITALIC)),
 			item("entity.function",    6,  None),
 
-			item("builtin.call",       11, Some(FontStyle::BOLD | FontStyle::ITALIC)),
-			item("builtin.outer",      11, Some(FontStyle::BOLD)),
-
-			item("op.mutation",        6,  None),
-			item("op.declaration",     6,  None),
+			item("op.special",         8,  Some(FontStyle::BOLD | FontStyle::ITALIC)),
+			item("op.thread",          8,  None),
 			item("op.arithmetic",      8,  None),
 			item("op.bitwise",         8,  None),
-			item("op.assignment",      8,  None),
 			item("op.logic",           8,  None),
-			item("op.other",           8,  None),
-			item("op.type",            5,  Some(FontStyle::BOLD)),
 			item("op.ref",             5,  None),
-			item("op.brackets",        5,  None),
-			item("op.semicolon",       4,  None),
+			item("op.brackets",        4,  None),
 
 			item("syntax.separator",   4,  None),
 		],
