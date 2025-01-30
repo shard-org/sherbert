@@ -11,47 +11,46 @@
 </div>
 
 ## Premise
-Flexible, terse, no compromise, and non-opinionated assembly-inspired programming language 
-geared toward compile target flexibility and direct control.  
-No assumptions, everything must be explicitly declared, including the code emitted.
+Simple-ish, pragmatic, terse, and non-opinionated programming language.  
+Born out of the need for a simpler *Rust* that doesn't standd in your way,  
+and a more powerful *C* without the multiple layers of technical debt.  
 
 ```
-// not your average language :v
-average [T:] nums, #WORD len, -> T {
-   %sum T 
-   %i #WORD
-   loop ('i ++ ; i < len):
-      'sum + nums.i
-   ret sum / len
+// pretty average language
+fn average(a: *[u32]) u32 {
+	let sum = loop let (sum, i) = (0, 0) {
+		if i == a.len(): break sum;
+		(sum + a[i], i + 1)
+	}
 }
 ```
 
 ## Features
-- Insane compiletime functionality; The code emitted is defined at comptime after all.. Think of **Shard** as a really fancy text preprocessor.  
-- Basically every part of the language is customizable.  
-- No <i>"Safety Features"</i> preventing you from doing stupid stuff. :L  
-- Architecture details are defined within the standard library, meaning adding support for additional ones doesn't
-  require modifying any compiler source code, and can by done by the user. As long as there's a compatible assembler, of course.  
-- Self contained projects; everything can be defined in a single file.
+- All the things you'd expect in a modern lang like: generic types, slice type, etc.
+- Explicit mutability, nullability and fat pointers. As a tool to the programmer.
+- Clojure like threading macros, allowing for a method-chain like syntax.  
+  (I cannot believe *ALL* languages dont have this, its just so useful)
+- Compiling to llvm IR, making it decently fast and platform agnostic out of the box.
+- Manual memory managment + minimal move semantics. Unlike *some* languages I could mention...
+- Pattern matching, and destructuring. Pretty much Rust with few confusing syntaxes removed.
 - Shark mascot! (best of all the features) ~~if you wanna draw a full version lmk~~
 
 ## Non-Features
-- Shard is not meant to be cross-platform or an IR. (although you could certainly try :>)  
-  All architectures are inherently dissimilar, and reconsiling them cannot be done without compromises.  
-- Optimizations are fully left to the user (or in part to whoever writes the standard library). 
-  If you need crazy fast code use 
-  [C](https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html),
-  [Rust](https://www.rust-lang.org/), or
-  [Zig](https://ziglang.org/)
-  instead (or just git gewd)  
-- Standard libraries are for defining the architecture only. They don't provide any additional functionality.
-  Use [libc](https://musl.libc.org/) if you want an expansive standard library.
+- Shard will not have a de-facto standard library.
+  Use [libc](https://musl.libc.org/) or something else instead.
+  This doesnt mean we won't publish official libraries, just that they wont be a core part of the language as many stds are nowdays
+- We arent planning on making a package manager or build system for shard.  
+  Although this might change in the future if the need arises.
 
 ## FAQ
-- Yes, there is a difference between *"compile target flexibility"* and *"cross-platform"*.  
-  The first is about being able to write **Shard** for any architecture, 
-  the latter is about compiling the same code to multiple architectures.
 - When are you gonna release? ... :( Yeah we're kinda starved for people to work on it..  
   Please help out if you can! (join the [Discord](https://discord.gg/f5FVgr7gxX) for more info)
+- Where's the old shard? This is a new project. I realized the old one was.. not *very* useful.
+  Don't get me wrong, I'd love to see it done in the future, but I decided to take a more pragmatic direction towards the dev.
+  The previous shard wasnt goin anywhere cause of disagreements on the direction, bikeshedding, and all those other fun things.  
+  One day we might also make **Phase** as a companion project, but thats a long way off.
+- Who's working on this? Check [the repo](https://github.com/shard-org/sharc) for up to date info.  
+  Currently its mostly me + bullying others into helping. 
+
 
 <include "footer.html">

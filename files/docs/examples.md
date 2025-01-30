@@ -1,96 +1,82 @@
 <link href="/style/style.css" rel="stylesheet"/>
 <include "header.html">
 
-# Hello World
-This direct use of the `write` syscall. It takes three arguments: 
-the file descriptor, the buffer, and the length of the buffer. 
-A file descriptor of `1` represents the `stdout`.  
-```
-:arch x86_64 linux
+Most of these assume `libc` is linked with the binary.
 
-entry: *write(1, "Hello, World!\n", 14)
+# Hello World
+`extern` is used to declare the `puts` libc function.
+using `_start` just to make it more minimal. (libc `main` would require us to return a val)
+```
+extern fn puts(str: *[u8]) u32;
+
+fn _start():
+	$puts "Hello, World!\0";
 ```
 
 
 # Fibonacci
-The example assumes the binary is linked with `libc`.
-`extern` is used to declare the `scanf` and `printf` functions.
+**Shard** doesn't have a way to deal with variadic funcs yet, so we have to
+*cheat* a little by defining `printf` and `scanf` with fixed arguments.
 ```
-:arch x86_64 linux
-extern scanf [1:], ? @varg
-extern printf [1:], ? @varg
+extern fn printf(str: *[u8], i: u32) u32;
+extern fn scanf(str: *[u8], i: *[u32]) u32;
 
-fibonacci 4 n, -> 4 {
-   (n <= 1): ret n
-   ret !fibonacci (n - 1) + !fibonacci (n - 2)
+fn fibonacci(n: u32) u32 {
+   if n <= 1: ret n;
+   $fibonacci(n - 1) + $fibonacci(n - 2)
 }
 
-entry {
-   %terms 4
-   $scanf "%d", &terms
+fn main() u32 {
+	// forced raii for now, we'll prob add a way to uninit
+   let terms: u32 = 0;
+   $scanf("%d", &terms);
 
-   loop (%i 4 ; 'i ++ ; i < terms):
-      $printf("%d\n", !fibonacci i)
+	loop let i = 0 {
+		if i == terms: break;
+		$printf("%d\n", $fibonacci(i));
+		i + 1
+	}
+
+	ret 0;
 }
 ```
 
 
 # Bubble Sort
+`&` signifies a fat pointer, which is basically `(*T, usize)` but with builtins to make it easier to work with.  
 ```
-:arch x86_64 linux
+use core::fat::meta as len;
 
-:verb run /bin/sh {
-   sharc #FILE
-   chmod +x #NAME
-   ./#NAME
-}
+fn main() u32 {
+	let array: &mut [u32] = {2, 8, 9, 7, 4, 3, 6, 5, 1, 0};
 
-entry {
-   %array 2:? <- {2, 8, 9, 7, 4, 3, 6, 5, 1, 0}
-
-   !bubble_sort(array, @len array)
+   $bubble_sort array;
 
    // print the array
-   loop (%i 4 ; 'i ++ ; i = @len array):
-      $printf("%d\n", array.i)
+	loop let i = 0 {
+		if i == $len array: break;
+		$printf("%d\n", array[i]);
+		i + 1
+	}
+
+	ret 0;
 }
 
-bubble_sort 2:? array, 4 len:
-   loop (%i 4 ; 'i ++ ; i < len):
-      loop (%j 4 ; 'j ++ ; j < len-i-1):
-         (array.j > array.j + 1) {
-            %temp array.j
-            'array.j <- array.j + 1
-            'array.j <- temp
-         }
-```
-
-
-# Fat Pointers
-The `#WORD` macro resolves to the word size of the architecture.  
-`T -> str` allows us to require any type `T` as long as it can be cast to the type `str`.
-```
-:arch x86_64 linux
-
-struct str {
-   #WORD len,
-   [1:]  ptr,
+fn bubble_sort(array: &mut [u32]) {
+	loop let i = 0 {
+		if i == $len array: break;
+		loop let j = 0 {
+			if j == $len array - i - 1: break;
+			if array[j] > array[j + 1] {
+				let temp = array[j];
+				array[j] = array[j + 1];
+				array[j] = temp;
+			}
+			j + 1
+		}
+		i + 1
+	}
 }
-
-// string must be null terminated
-cast [1:] string -> str {
-   %string <- [1:] @cast string
-   %i #WORD
-   loop ('i ++ ; string.i = 0)
-   ret {string, i}
-}
-
-print T -> str s {
-    %s <- s -> str
-    *write(1, s.ptr, s.len)
-}
-
-entry: !print "Hello, World!"
 ```
 
 

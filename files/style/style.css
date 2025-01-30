@@ -20,6 +20,7 @@ body {
    max-width: 110ch;
 
    margin: 1em auto;
+	tab-size: 3;
 }
 
 h1 {
@@ -73,6 +74,7 @@ code > pre {
    background-color: var(--colour0);
 
    padding: 1rem;
+	padding-top: 0.8rem;
    margin: 0.25rem 0.5rem;
 
    border-radius: 0.75em;

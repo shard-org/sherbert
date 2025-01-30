@@ -6,9 +6,9 @@ If you want to contribute you should probably join one of these :p
 
 <div class=block>
 
-[Discord](https://discord.gg/f5FVgr7gxX) - the main way to chat (this is where the dev happens).  
-
-~~that's it for now~~
+* [Discord](https://discord.gg/f5FVgr7gxX) - the main way to chat (this is where the dev happens).  
+* ~~IRC~~ - one day.. one day..
+* ~~that's it for now~~
 
 </div>
 <include "footer.html">
