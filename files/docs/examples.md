@@ -9,31 +9,32 @@ using `_start` just to make it more minimal. (libc `main` would require us to re
 ```
 extern fn puts(str: *[u8]) u32;
 
-fn _start():
-	$puts "Hello, World!\0";
+export fn _start() {
+	puts("Hello, World!\0");
+}
 ```
 
 
 # Fibonacci
 **Shard** doesn't have a way to deal with variadic funcs yet, so we have to
-*cheat* a little by defining `printf` and `scanf` with fixed arguments.
+cheat a *little* by defining `printf` and `scanf` with fixed arguments.
 ```
 extern fn printf(str: *[u8], i: u32) u32;
 extern fn scanf(str: *[u8], i: *[u32]) u32;
 
 fn fibonacci(n: u32) u32 {
    if n <= 1: ret n;
-   $fibonacci(n - 1) + $fibonacci(n - 2)
+   fibonacci(n - 1) + fibonacci(n - 2)
 }
 
-fn main() u32 {
+export fn main() u32 {
 	// forced raii for now, we'll prob add a way to uninit
    let terms: u32 = 0;
-   $scanf("%d", &terms);
+   scanf("%d\0", &terms);
 
 	loop let i = 0 {
 		if i == terms: break;
-		$printf("%d\n", $fibonacci(i));
+		printf("%d\n\0", fibonacci(i));
 		i + 1
 	}
 
@@ -45,17 +46,17 @@ fn main() u32 {
 # Bubble Sort
 `&` signifies a fat pointer, which is basically `(*T, usize)` but with builtins to make it easier to work with.  
 ```
-use core::fat::meta as len;
+use core::fat;
 
-fn main() u32 {
-	let array: &mut [u32] = {2, 8, 9, 7, 4, 3, 6, 5, 1, 0};
+export fn main() u32 {
+	let array: &mut [u32] = [2, 8, 9, 7, 4, 3, 6, 5, 1, 0];
 
-   $bubble_sort array;
+   bubble_sort(array);
 
    // print the array
 	loop let i = 0 {
-		if i == $len array: break;
-		$printf("%d\n", array[i]);
+		if i == fat::meta(array): break;
+		printf("%d\n\0", array[i]);
 		i + 1
 	}
 
@@ -64,9 +65,9 @@ fn main() u32 {
 
 fn bubble_sort(array: &mut [u32]) {
 	loop let i = 0 {
-		if i == $len array: break;
+		if i == fat::meta(array): break;
 		loop let j = 0 {
-			if j == $len array - i - 1: break;
+			if j == fat::meta(array) - i - 1: break;
 			if array[j] > array[j + 1] {
 				let temp = array[j];
 				array[j] = array[j + 1];
@@ -84,39 +85,72 @@ fn bubble_sort(array: &mut [u32]) {
 This is how a possible iterator implementation could be done.  
 Structs can take generic types
 ```
-:arch x86_64 linux
+use core::fat;
 
-extern malloc #WORD -> []
-extern free []
-extern memcpy [1:], [1:], #WORD -> []
+extern fn malloc(size: usize) opt *mut void;
+extern fn free(ptr: *mut void);
+extern fn memcpy(src: *void, dst: *mut void, len: usize) opt *mut void;
 
-struct Iterator[T] {
-   #WORD len,
-   [T:]  ptr,
+trait Iter<T> {
+	fn curr(self: Self) *T;
+	fn rest(self: Self) Self;
 }
 
-from T: array -> Iterator[T] {
-   %heap [T:] <- $malloc @size array
-   $memcpy(heap, array, @size array)
-   ret {@len array, heap}
+struct ArrIter<T> {
+	arr: &[T],
 }
 
-map Iterator[T] iter, [] func -> Iterator[T] {
-   loop (%i 4 ; 'i ++ ; i < iter.len):
-      !func iter.ptr.i
-   ret iter
+impl Iter<T>: ArrIter<T> {
+	fn curr(self: *Self) opt *T {
+		if self.arr->fat::meta() == 0: ret null;
+		fat::ptr(self.arr[0])
+	}
+
+	fn rest(self: Self) Self {
+		{ self.arr[1..] }
+	}
 }
 
-for_each Iterator[T] iter, [] func {
-   loop (%i 4 ; 'i ++ ; i < iter.len):
-      !func iter.ptr.i
-   $free iter.ptr
+fn into<T>(arr: &[T]) ArrIter<T> {
+	{ arr }
 }
 
-entry:
-   Iterator[4] !from {1, 2, 3, 4, 5, 6, 7, 8}
-      => !map |x: x * 2|
-      => !for_each |x: $printf("%d\n", x)|
+
+struct MapIter<T, E> {
+	iter: ArrIter<T>,
+	func: fn(*T) E,
+}
+
+fn map<T, E>(iter: impl Iter<T>, func: fn(*T) E) MapIter<T, E> {
+	{ iter, func }
+}
+
+impl Iter<E>: MapIter<T, E> {
+	fn curr(self: *Self) *E {
+		self.func(self.iter.curr() ? ret null)
+	}
+
+	fn rest(self: Self) Self {
+		{ self.iter.rest(), self.func }
+	}
+}
+
+
+fn foreach(iter: impl Iter<T>, func: fn(*T)) {
+	loop let i = iter {
+		if i.curr() == null: break;
+		func(i.curr);
+		i.rest
+	}
+}
+
+export fn main() u32 {
+	[1, 2, 3, 4, 5, 6, 7, 8] 
+		-> into::<Iter<u32>>()
+      -> map(|x| x * 2)
+      -> foreach(|x| printf("%d\n\0", x));
+	ret 0;
+}
 ```
 
 <include "footer.html">

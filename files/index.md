@@ -16,12 +16,15 @@ Born out of the need for a simpler *Rust* that doesn't standd in your way,
 and a more powerful *C* without the multiple layers of technical debt.  
 
 ```
-// pretty average language
-fn average(a: *[u32]) u32 {
+use core::fat;
+
+// pretty average language :p
+fn average(a: &[u32]) u32 {
 	let sum = loop let (sum, i) = (0, 0) {
-		if i == a.len(): break sum;
+		if i == fat::meta(a): break sum;
 		(sum + a[i], i + 1)
-	}
+	};
+	sum / fat::meta(a)
 }
 ```
 

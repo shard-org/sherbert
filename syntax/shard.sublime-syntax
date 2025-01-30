@@ -6,14 +6,8 @@ scope: source.s
 
 contexts:
   main:
-    - match: \b(ret)\b
-      scope: keyword.ret
-
-    - match: (:\w+)
-      scope: tag.inner
-
-    - match: (::\w+)
-      scope: tag.outer
+    - match: '\b(ret|loop|break|continue)\b'
+      scope: keyword.control
 
     - match: //.*$
       scope: comment
@@ -21,25 +15,16 @@ contexts:
     - match: '\/\*'
       push: comment_block
 
-    - match: "%"
-      scope: op.declaration
-
-    - match: "'"
-      scope: op.mutation
-
-    - match: '@\w+'
-      scope: builtin.call
-
-    - match: '@@\w+'
-      scope: builtin.outer
-
-    - match: '\bmod|if|use|fn|pub|let|enum|trait|export|copy|impl|move|struct|extern|type\b'
+    - match: '\bmod|if|use|fn|pub|let|enum|trait|export|impl|struct|extern|type\b'
       scope: keyword.other
 
-    - match: 'mut|opt|void|never'
+    - match: '\bcopy|move\b'
+      scope: keyword.move
+
+    - match: '&mut|\*mut|mut|opt'
       scope: keyword.attribute
 
-    - match: '->|->>'
+    - match: '\b(->|->>)\b'
       scope: op.thread
 
     - match: '\{|\}|\(|\)|\|'
@@ -51,34 +36,32 @@ contexts:
     - match: '\b>>|<<|~|&|\||\^\b'
       scope: op.bitwise
 
-    - match: '<-|\+\+|--'
-      scope: op.assignment
-
-    - match: '~=|='
+    - match: '!=|=='
       scope: op.logic
 
     - match: '&|\*'
       scope: op.ref
 
+    - match: '\b\?\b'
+      scope: op.special
+
     - match: ';|:'
-      scope: op.separator
+      scope: syntax.separator
 
     - match: ([A-Z][a-z]+(?:[A-Z][a-z]+)*)
       scope: entity.type.named
 
-    - match: 'usize|isize|u8|u16|u32|u64|b8|b16|b32|b64|i8|i16|i32|i64'
+    - match: 'usize|isize|(u\d+)|(b\d+)|(i\d+)|void|never'
       scope: entity.type
 
-    - match: '\?'
-      scope: entity.type.lesser
+    - match: '\b[A-Z]\b'
+      scope: entity.type.generic
 
     - match: '\[|\]'
       scope: op.brackets
 
-    - match: '#\w+'
-      scope: preprocess.macro
-
-    - match: '(\$)\w+|(\$)(?=<)|(?<=>)\w+'
+    # - match: '([a-zA-Z_]\w*)?(::)(?=<)|(?<=>)\s*(?=\()|([a-zA-Z_]\w*)\s*(?=\()'
+    - match: '\b([a-zA-Z_]\w*)(?=\s*<|\s*\(|::)'
       scope: entity.function
 
     - match: \b[0-9]+\.[0-9]+\b
@@ -105,6 +88,6 @@ contexts:
 
   char:
     - meta_scope: literal.char
-    - match: '`'
+    - match: "'"
       pop: true
 
