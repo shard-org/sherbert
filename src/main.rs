@@ -45,7 +45,7 @@ fn main() {
 
 		match (url, get_theme(headers)) {
 			(url, Some(theme)) if !args.contains_key("t") => http::Response::builder()
-				.status(301)
+				.status(307)
 				.header("Location", &format!("{}?t={theme}", 
 					url.strip_suffix(".html").unwrap_or(url)))
 				.body(Vec::new())
