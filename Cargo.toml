@@ -9,8 +9,8 @@ license = "0BSD"
 foxhole = { git = "https://github.com/Kay-Conte/foxhole-rs" }
 
 [build-dependencies]
-comrak = { version = "0.27", default-features = false, features = ["syntect"] }
-regex = "1.10"
+comrak = { version = "0.35", default-features = false, features = ["syntect"] }
+regex = "1.11"
 syntect = "5.2"
 walkdir = "2.5"
 

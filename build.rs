@@ -26,16 +26,17 @@ fn main() {
 		fs::read_to_string(INDIR.join(&c[1])).unwrap()));
 
 	let options = Options {
-		extension: comrak::ExtensionOptionsBuilder::default()
-			.strikethrough(true)
-			.table(true)
-			.superscript(true)
-			.footnotes(true)
-			.multiline_block_quotes(true)
-			.math_dollars(true)
-			.underline(true)
-			.spoiler(true)
-			.build().unwrap(),
+		extension: comrak::ExtensionOptions {
+			strikethrough: true,
+			table: true,
+			superscript: true,
+			footnotes: true,
+			multiline_block_quotes: true,
+			math_dollars: true,
+			underline: true,
+			spoiler: true,
+			..Default::default()
+		},
 		..Default::default()
 	};
 	let into_html = |path: &Path| {
@@ -54,7 +55,7 @@ fn main() {
 	};
 
 	if OUTDIR.exists() 
-	{ fs::remove_dir_all(&*OUTDIR).unwrap(); }
+		{ fs::remove_dir_all(&*OUTDIR).unwrap(); }
 
 	fs::create_dir(&*OUTDIR).unwrap();
 
