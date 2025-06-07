@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::path::PathBuf;
 
-struct Files(HashMap<PathBuf, Arc<Vec<u8>>>);
+struct Files(HashMap<PathBuf, Vec<u8>>);
 impl foxhole::TypeCacheKey for Files {
 	type Value = Arc<RwLock<Self>>;
 }
@@ -34,22 +34,22 @@ fn main() {
 			};
 
 			if let Some(contents) = files.read().unwrap().0.get(&path) {
-				return Response::new(contents.to_vec());
+				return Response::new(contents.clone());
 			}
 
-			let contents = match std::fs::read(&path) {
-				Ok(data) => Arc::new(data),
+			match std::fs::read(&path) {
+				Ok(contents) => {
+					files.write().unwrap().0.insert(path, contents.clone());
+					Response::new(contents)
+				},
 				Err(e)   => {
 					println!("{e}; for: {url:?}");
-					return http::Response::builder().status(301)
+					http::Response::builder().status(301)
 						.header("Location", &format!("/404{}", 
 							get_theme(&headers).map_or(String::new(), |t| format!("?t={t}"))))
-						.body(Vec::new()).unwrap();
+						.body(Vec::new()).unwrap()
 				},
-			};
-
-			files.write().unwrap().0.insert(path, contents.clone());
-			Response::new(contents.to_vec())
+			}
 		};
 
 		match (url, get_theme(&headers)) {

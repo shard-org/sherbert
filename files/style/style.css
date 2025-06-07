@@ -143,7 +143,7 @@ code > pre {
    overflow: hidden;
 }
 
-.dropdown .dropbtn {
+.dropdown button {
    font-size: var(--nav-size);
    font-weight: bold;
    font-family: inherit;
@@ -160,7 +160,7 @@ code > pre {
    transition: background-color 0.2s ease;
 }
 
-.navbar a:hover, .dropdown:hover .dropbtn {
+.navbar a:hover, .dropdown:hover button {
    background-color: var(--colour10);
 }
 
