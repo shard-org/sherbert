@@ -87,6 +87,62 @@ fn parse_block<'a>(node: &'a AstNode<'a>) -> String {
 			format!("\n<h{level} id=\"{}\">{}</h{level}>\n", 
 				str.to_lowercase().split_whitespace().collect::<String>(), str)
 		},
+		NodeValue::Table(..) => {
+			let mut out = String::from("<table>\n");
+
+			// Required as per GFM spec to not generate bodies
+			// when a table row hasn't been seen.
+
+			let mut seen_header = false;
+			let mut seen_body   = false;
+
+			for row in node.children() {
+				if let NodeValue::TableRow(header) = row.data.borrow().value {
+					if header && !seen_header {
+						out.push_str("<thead>\n");
+						seen_header = true;
+					}
+
+					if !seen_body && seen_header && !header {
+						out.push_str("</thead>\n");
+						out.push_str("<tbody>\n");
+						seen_body = true;
+					}
+
+					out.push_str("<tr>\n");
+
+					for cell in row.children() {
+						if let NodeValue::TableCell = cell.data.borrow().value {
+							let mut cell_str = to_string(cell);
+							
+							// Skip blank cells
+							// if cell_str.is_empty() { continue };
+
+							if header {
+								cell_str = format!("<th>{}</th>\n", cell_str);
+							} else {
+								cell_str = format!("<td>{}</td>\n", cell_str);
+							}
+
+							out.push_str(cell_str.as_str());
+						} else {
+							eprintln!("WARNING: expected only TableCells as direct children of TableRow!");
+						}
+					}
+
+					out.push_str("</tr>\n");
+				} else {
+					eprintln!("WARNING: expected only TableRows as direct children of Table!");
+				}
+			}
+
+			if !seen_body && seen_header {
+				out.push_str("</thead>\n");
+			}
+
+			out.push_str("</table>\n");
+			out
+		},
 		NodeValue::Text(ref text) => String::from(text),
 		NodeValue::LineBreak      => String::from("<br>\n"),
 		NodeValue::SoftBreak      => String::from(" \n"),
