@@ -35,7 +35,7 @@ a {
    text-decoration: none;
    font-weight: bold;
    color: var(--colour6);
-
+   white-space: nowrap; /* never line-break inside links */
    border-bottom: 1px dashed transparent;
    transition: border-color 0.2s ease;
 }
@@ -46,7 +46,7 @@ a:hover {
 
 
 /* colours */
-i { color: var(--colour12); }
+i { font-style: italic; }
 b { color: var(--colour10); }
 s { color: var(--colour2); }
 
@@ -179,4 +179,10 @@ code > pre {
 	background-color: var(--colour0);
 	border-radius: 0.2rem;
 	padding: 0.1rem;
+}
+
+th {
+	text-align: left;
+	border-bottom: 0.2rem solid var(--colour10);
+	border-spacing: 1em;
 }
