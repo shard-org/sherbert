@@ -1,20 +1,11 @@
 @import url("/theme.css");
-
-@font-face {
-   font-family: "Pragmasevka";
-   src: url("/style/small-pragmasevka-webfont.woff2") format("woff2");
-}
+@import url("/style/typography.css");
 
 :root {
    --indent:   15px;
-   --reg-size: 1.15em;
-   --heading-size: 1.35em;
-
-   --nav-size: 1.25em;
 }
 
 body {
-   font-family: "Pragmasevka", monospace;
    background-color: var(--colour1);
    color: var(--colour3);
    max-width: 110ch;
@@ -24,7 +15,6 @@ body {
 }
 
 h1 {
-   font-size: var(--heading-size);
    padding-bottom: 0.5rem;
    margin: 0.75rem 0;
    border-bottom: 2px solid var(--colour3);
@@ -34,11 +24,9 @@ h2 {
    padding-top: 10px;
    margin-bottom: 2px;
    margin-top: 10px;
-   font-size: var(--heading-size);
 }
 
 p {
-   font-size: var(--reg-size);
    margin: 8px 0 12px var(--indent);
    padding-left: 1rem;
 }
@@ -70,7 +58,6 @@ code > pre {
    display: inline-block;
    flex-grow: 1;
 
-   font-size: var(--reg-size);
    background-color: var(--colour0);
 
    padding: 1rem;
@@ -113,9 +100,6 @@ code > pre {
    padding-top: 10px;
 }
 
-.footer p {
-   font-size: 0.85em;
-}
 
 
 /* navbar stuff */
