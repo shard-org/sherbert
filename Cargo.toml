@@ -14,6 +14,9 @@ regex = "1.11"
 syntect = "5.2"
 walkdir = "2.5"
 
+[env]
+DEFAULT_THEME = "nord"
+
 [profile.release]
 lto = true
 panic = "abort"
