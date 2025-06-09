@@ -190,3 +190,9 @@ code > pre {
 .dropdown:hover .dropdown-content {
    display: block;
 }
+
+.code {
+	background-color: var(--colour0);
+	border-radius: 0.2rem;
+	padding: 0.1rem;
+}
