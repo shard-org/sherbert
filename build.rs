@@ -143,7 +143,8 @@ fn parse_block<'a>(node: &'a AstNode<'a>) -> String {
 			out.push_str("</table>\n");
 			out
 		},
-		NodeValue::Text(ref text) => String::from(text),
+		// we are fancy and use em dashes, not just hyphens
+		NodeValue::Text(ref text) => String::from(text).replace("--", "—"), 
 		NodeValue::LineBreak      => String::from("<br>\n"),
 		NodeValue::SoftBreak      => String::from(" \n"),
 		NodeValue::Paragraph      => format!("<p>{}</p>\n", to_string(node)),
