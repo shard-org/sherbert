@@ -154,7 +154,7 @@ fn parse_block<'a>(node: &'a AstNode<'a>) -> String {
 		NodeValue::Strikethrough  => format!("<s>{}</s>", to_string(node)),
 		NodeValue::HtmlInline(ref html) => String::from(html),
 		NodeValue::HtmlBlock(NodeHtmlBlock { ref literal, .. }) => String::from(literal),
-		NodeValue::Code(NodeCode { ref literal, .. }) => format!("<span class=\"code\">{literal}</span>"),
+		NodeValue::Code(NodeCode { ref literal, .. }) => format!("`{literal}`"),
 		NodeValue::Link(NodeLink { ref url, .. }) => format!("<a href=\"{url}\">{}</a>", to_string(node)), 
 		NodeValue::Image(NodeLink { ref url, .. }) => format!("<img src=\"{url}\" alt=\"{}\">", to_string(node)),
 		NodeValue::List(NodeList { ref bullet_char, .. }) => format!("<div class=block>\n{}</div>\n", 
