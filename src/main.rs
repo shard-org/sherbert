@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 use std::path::PathBuf;
 
-struct Files(HashMap<PathBuf, Vec<u8>>);
+struct Files(HashMap<PathBuf, http::Response<Vec<u8>>>);
 impl foxhole::TypeCacheKey for Files {
 	type Value = Arc<RwLock<Self>>;
 }
@@ -26,21 +26,27 @@ fn main() {
 	}
 
 	fn get_file(Query(files): Query<Files>, Url(url): Url, headers: HeaderMap, ArgMap(args): ArgMap) -> Response {
-		let get = |files: &Arc<RwLock<Files>>, filename: String| {
+		let get = |files: &Arc<RwLock<Files>>, filename: String| -> http::Response<Vec<u8>> {
 			let path = match PathBuf::from(filename) {
 				p if p.is_dir() => p.join("index.html"),
 				p if !p.to_str().unwrap().contains(".") => p.with_extension("html"),
 				p => p,
 			};
 
-			if let Some(contents) = files.read().unwrap().0.get(&path) {
-				return Response::new(contents.clone());
+			if let Some(response) = files.read().unwrap().0.get(&path) {
+				return response.clone();
 			}
 
 			match std::fs::read(&path) {
 				Ok(contents) => {
-					files.write().unwrap().0.insert(path, contents.clone());
-					Response::new(contents)
+					let response = http::Response::builder().status(200)
+						.header("Content-Type", mime_guess::from_path(&path)
+							.first_or_octet_stream().essence_str())
+						.body(contents.clone())
+						.unwrap();
+
+					files.write().unwrap().0.insert(path, response.clone());
+					response
 				},
 				Err(e)   => {
 					println!("{e}; for: {url:?}");
