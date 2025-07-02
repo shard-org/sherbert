@@ -1,29 +1,48 @@
 @import url("/theme.css");
-@import url("/style/typography.css");
+
+@font-face {
+   font-family: "Pragmasevka";
+   src: url("/style/small-pragmasevka-webfont.woff2") format("woff2");
+}
 
 :root {
-	--indent:   15px;
+	--indent:       0.9rem;
+	--nav-size:     1.3rem;
+	--heading-size: 1.4rem;
+	--normal-size:  1.1rem;
 }
 
 body {
+   font-family: "Pragmasevka", monospace;
+   font-size: var(--normal-size);
+	font-weight: 400;
+	tab-size: 3;
+
 	background-color: var(--colour1);
 	color: var(--colour3);
-	max-width: 110ch;
-
-	margin: 1em auto;
-	tab-size: 3;
+	max-width: 120ch;
+	padding: 1.3rem;
+	margin: 0 auto;
 }
 
 h1 {
+	font-size: var(--heading-size);
 	padding-bottom: 0.5rem;
 	margin: 0.75rem 0;
 	border-bottom: 2px solid var(--colour3);
 }
 
 h2 {
+	font-size: var(--heading-size);
 	padding-top: 10px;
 	margin-bottom: 2px;
 	margin-top: 10px;
+}
+
+h3 {
+	font-size: calc(var(--heading-size) - 0.2rem);
+	margin: 8px 0 8px var(--indent);
+	padding-left: 1rem;
 }
 
 p {
@@ -36,7 +55,7 @@ a {
 	font-weight: bold;
 	color: var(--colour6);
 	white-space: nowrap; /* never line-break inside links */
-	border-bottom: 1px dashed transparent;
+	border-bottom: 2px dashed transparent;
 	transition: border-color 0.2s ease;
 }
 
@@ -44,11 +63,22 @@ a:hover {
 	border-color: var(--colour6);
 }
 
+table {
+}
+
+th {
+	text-align: left;
+	border-bottom: 2px solid var(--colour3);
+	border-spacing: 1em;
+}
+
+
 
 /* colours */
 i { font-style: italic; }
 b { color: var(--colour10); }
 s { color: var(--colour2); }
+c { color: var(--colour8); }
 
 code {
 	display: flex;
@@ -58,6 +88,7 @@ code > pre {
 	display: inline-block;
 	flex-grow: 1;
 
+	font-size: calc(var(--normal-size) - 0.1rem);
 	background-color: var(--colour0);
 
 	padding: 1rem;
@@ -69,9 +100,11 @@ code > pre {
 }
 
 
+
 /* classes */
 .block {
 	margin-bottom: 12px;
+	margin-top: 8px;
 }
 
 .block p {
@@ -98,6 +131,8 @@ code > pre {
 	align-items: center;
 	height: 15px;
 	padding-top: 10px;
+
+	font-size:   0.85rem;
 }
 
 
@@ -173,10 +208,4 @@ code > pre {
 
 .dropdown:hover .dropdown-content {
 	display: block;
-}
-
-th {
-	text-align: left;
-	border-bottom: 0.2rem solid var(--colour10);
-	border-spacing: 1em;
 }
