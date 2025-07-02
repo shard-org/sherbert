@@ -1,7 +1,6 @@
 <link href="style/style.css" rel="stylesheet"/>
 <include "header.html">
 
-Not done yet!  
-Bug me on discord bout this
+None yet! Stay tuned for updates :)
 
 <include "footer.html">
