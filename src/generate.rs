@@ -9,21 +9,23 @@ use syntect::parsing::{SyntaxSetBuilder, Scope, ScopeStack};
 use regex::{Regex, Captures};
 
 use std::collections::BTreeMap;
-use std::sync::LazyLock;
+use std::sync::{LazyLock, OnceLock};
 
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::io::Write;
 
-static INDIR:  LazyLock<PathBuf> = LazyLock::new(|| Path::new("files").to_path_buf());
-static OUTDIR: LazyLock<PathBuf> = LazyLock::new(|| Path::new("site").to_path_buf());
+// workaround since syntax is loaded in a static and I cant be bothered to move it
+static SYNTAX_DIR: OnceLock<PathBuf> = OnceLock::new();
 
-fn main() {
-	static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<include "(.*)">"#).unwrap());
+pub fn generate(src: &Path, dst: &Path, syntax: PathBuf) {
+	SYNTAX_DIR.get_or_init(|| syntax);
 
-	let includes = |str: &str|
-	format!("{}\n", RE.replace_all(str, |c: &Captures| 
-		fs::read_to_string(INDIR.join(&c[1])).unwrap()));
+	let includes = |str: &str| {
+		static RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"<include "(.*)">"#).unwrap());
+		format!("{}\n", RE.replace_all(str, |c: &Captures| 
+			fs::read_to_string(src.join(&c[1])).unwrap()))
+	};
 
 	let options = Options {
 		extension: comrak::ExtensionOptions {
@@ -39,6 +41,7 @@ fn main() {
 		},
 		..Default::default()
 	};
+
 	let into_html = |path: &Path| {
 		let arena = Arena::new();
 		let root = parse_document(&arena,
@@ -54,18 +57,19 @@ fn main() {
 		fs::File::create(path).unwrap()
 	};
 
-	if OUTDIR.exists() 
-		{ fs::remove_dir_all(&*OUTDIR).unwrap(); }
+	if dst.exists() { 
+		fs::remove_dir_all(&*dst).unwrap(); 
+	}
 
-	fs::create_dir(&*OUTDIR).unwrap();
+	fs::create_dir(&*dst).unwrap();
 
-	for entry in walkdir::WalkDir::new(&*INDIR) {
+	for entry in walkdir::WalkDir::new(&*src) {
 		let entry = entry.unwrap();
 		let path = entry.path();
 
 		if path.is_dir() { continue; }
 
-		let dest = OUTDIR.join(Path::new(path.strip_prefix("files/").unwrap()));
+		let dest = dst.join(path.iter().skip(1).collect::<PathBuf>());
 
 		match path.extension().and_then(|s| s.to_str()) {
 			Some("md")   => mkfile(&dest.with_extension("html")).write_all(includes(&into_html(path)).as_bytes()),
@@ -242,7 +246,7 @@ static ADAPTER: LazyLock<SyntectAdapter> = LazyLock::new(|| {
 
 	let mut set = SyntaxSetBuilder::new();
 	set.add_plain_text_syntax();
-	set.add_from_folder("syntax/", true).unwrap();
+	set.add_from_folder(SYNTAX_DIR.get().unwrap(), true).unwrap();
 
 	SyntectAdapterBuilder::new()
 		.theme_set(ThemeSet {
