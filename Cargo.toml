@@ -6,8 +6,7 @@ authors = ["slbsh"]
 license = "0BSD"
 
 [dependencies]
-# foxhole = { git = "https://github.com/Kay-Conte/foxhole-rs" }
-foxhole = { path = "../foxhole-rs" }
+foxhole = { git = "https://github.com/Kay-Conte/foxhole-rs" }
 mime_guess = "2.0"
 
 [build-dependencies]
