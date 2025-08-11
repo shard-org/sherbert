@@ -17,7 +17,7 @@ pop in, discuss, chat, and become part of our little corner of the internet!
 
 ## Projects
 Our flagship project is [shard](/projects/shard) -- a simple, pragmatic, 
-and non opinionated functional functional flavoured imperative language.
+and non opinionated functional flavoured imperative language.
 Have a peek! And if it is something you'd like, why not contribute?
 
 For more information on all of the **nh3** projects, see the [/projects](/projects) page.
